@@ -16,6 +16,10 @@
     --maxw:1180px;
   }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
   *,*::before,*::after{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{
