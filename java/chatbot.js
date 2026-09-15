@@ -16,6 +16,13 @@ function toggleChat() {
 function procesarConsulta(mensaje) {
     const texto = mensaje.toLowerCase().trim();
 
+    // 1. DETECCIÓN DE ATENCIÓN HUMANA / CONTACTO / WHATSAPP
+    if (texto.includes("contacto") || texto.includes("persona") || texto.includes("asesor") || texto.includes("humano") || texto.includes("vendedor") || texto.includes("whatsapp") || texto.includes("hablar con alguien")) {
+        return `Claro que sí, puedes comunicarte directamente con un asesor a través de nuestro WhatsApp:<br><br>` +
+        `<a href="https://api.whatsapp.com/send/?phone=573138349422" target="_blank" style="display: inline-block; background-color: #18773b; color: white; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">💬 Hablar con un asesor</a>`;
+    }
+
+    // 2. AGRADECIMIENTOS
     if (texto.includes("gracias") || texto.includes("agradecido") || texto.includes("vale gracias") || texto.includes("muchas gracias")) {
         const respuestasAmables = [
             "¡Con muchísimo gusto! 😊 Estoy para ayudarte. ¿Necesitas consultar algo más?",
@@ -57,7 +64,7 @@ function procesarConsulta(mensaje) {
         return respuestaFinal.trim();
     }
 
-    return "No entendí tu consulta. Intenta preguntando por categorías como:<br>• <i>¿Qué calzado e impermeables tienes?</i><br>• O salúdame con un <i>'Hola'</i>.";
+    return "No entendí tu consulta. Intenta preguntando por categorías como:<br>• <i>¿Qué calzado e impermeables tienes?</i><br>• O escribe <i>'Quiero hablar con un asesor'</i> si deseas contacto directo.";
 }
 
 function consultarStockCategoria(cat, nombreMostrar) {
