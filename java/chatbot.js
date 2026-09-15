@@ -63,7 +63,7 @@ const PALABRAS_RELLENO = new Set([
 ]);
 
 let ultimoContexto = { categorias: [] };
-let sugerirBotones = false; // se activa cuando conviene mostrar botones rápidos
+let sugerirBotones = false;
 
 const PALABRAS_CONTINUACION = [
     "otro", "otra", "otros", "otras", "algo mas", "alguno", "algunas",
