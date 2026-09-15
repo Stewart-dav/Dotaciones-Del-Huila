@@ -1,4 +1,3 @@
-// 1. INVENTARIO DE PRODUCTOS (BASE DE DATOS SIMULADA)
 const inventario = [
     { id: 1, categoria: "calzado", nombre: "Bota Dieléctrica Titanium", precio: "$145.000", stock: 12 },
     { id: 2, categoria: "calzado", nombre: "Zapato Ejecutivo con Puntera", precio: "$120.000", stock: 20 }, 
@@ -9,17 +8,14 @@ const inventario = [
     { id: 7, categoria: "guantes", nombre: "Guantes de Carnaza Reforzados", precio: "$15.000", stock: 0 }
 ];
 
-    // 2. TOGGLE ABRIR / CERRAR CHAT
 function toggleChat() {
     const window = document.getElementById("chatWindow");
     window.classList.toggle("hidden");
 }
 
-    //Procesamiento de respuesta
 function procesarConsulta(mensaje) {
     const texto = mensaje.toLowerCase().trim();
 
-    // 1. AGRADECIMIENTOS
     if (texto.includes("gracias") || texto.includes("agradecido") || texto.includes("vale gracias") || texto.includes("muchas gracias")) {
     const respuestasAmables = [
     "¡Con muchísimo gusto! 😊 Estoy para ayudarte. ¿Necesitas consultar algo más?",
@@ -29,7 +25,6 @@ function procesarConsulta(mensaje) {
     return respuestasAmables[Math.floor(Math.random() * respuestasAmables.length)];
 }
 
-    // 2. SALUDOS
     if (texto.includes("hola") || texto.includes("buenas") || texto.includes("buenos dias") || texto.includes("buenas tardes") || texto.includes("buenas noches")) {
     const saludos = [
     "¡Hola! 👋 Qué gusto saludarte. Puedes preguntarme por nuestro catálogo de calzado, impermeables, guantes, protección visual, etc.",
@@ -39,7 +34,6 @@ function procesarConsulta(mensaje) {
     return saludos[Math.floor(Math.random() * saludos.length)];
 }
 
-    // 3. CONSULTA DE CATEGORÍAS EN LA BASE DE DATOS
     const categoriasSolicitadas = [];
 
     if (texto.includes("calzado") || texto.includes("zapatos") || texto.includes("botas")) {
@@ -55,7 +49,6 @@ function procesarConsulta(mensaje) {
     categoriasSolicitadas.push({ id: "guantes", label: "Guantes" });
 }
 
-    // Si encontró categorías en el mensaje, muestra los productos
     if (categoriasSolicitadas.length > 0) {
     let respuestaFinal = "";
     categoriasSolicitadas.forEach(item => {
@@ -64,14 +57,12 @@ function procesarConsulta(mensaje) {
     return respuestaFinal.trim();
 }
 
-    // 4. RESPUESTA POR DEFECTO SI NO ENTIENDE
     return "No entendí tu consulta. Intenta preguntando por categorías como:<br>• <i>¿Qué calzado e impermeables tienes?</i><br>• O salúdame con un <i>'Hola'</i>.";
 }
 
 function consultarStockCategoria(cat, nombreMostrar) {
     const productos = inventario.filter(p => p.categoria === cat);
 
-    // CASO 1: No hay productos o están sin stock
     const conStock = productos.filter(p => p.stock > 0);
     if (conStock.length === 0) {
     return `Actualmente no tenemos stock disponible en ${nombreMostrar} 😔.<br><br>` +
@@ -79,33 +70,29 @@ function consultarStockCategoria(cat, nombreMostrar) {
     O mira todos nuestros <a href="catalogo.html" target="_blank" style="color:var(--orange);">cátalogos</a>.`;
 }
 
-    // FUNCIÓN AUXILIAR: Convierte "$145.000" a un número real (145000) para poder comparar
     const obtenerPrecioNumerico = (precioStr) => {
     return parseInt(precioStr.replace(/[^0-9]/g, ''), 10);
 };
 
-    // ORDENAR DE MENOR A MAYOR PRECIO
     productos.sort((a, b) => obtenerPrecioNumerico(a.precio) - obtenerPrecioNumerico(b.precio));
 
-    // CASO 2: Construir la respuesta ordenada
     let html = `Tenemos las siguientes opciones en ${nombreMostrar}:<br><br>`;
 
     productos.forEach(p => {
     if (p.stock === 0) {
-      // Producto Agotado
+
     html += `• <s>${p.nombre}</s> <span class="badge-stock">AGOTADO</span><br>`;
     } else if (p.stock === 1) {
-      // ÚLTIMA UNIDAD
+
     html += `• <b>${p.nombre}</b> ${p.precio} <span class="badge-last">(¡ÚLTIMA UNIDAD!)</span><br>`;
     } else {
-      // Stock normal
+
     html += `• <b>${p.nombre}</b> ${p.precio} (${p.stock} dispon.)<br>`;
     }
 });
     return html;
 }
 
-    // 4. INTERACCIÓN CON EL DOM
 function sendChatMessage() {
     const input = document.getElementById("chatInput");
     const val = input.value.trim();
