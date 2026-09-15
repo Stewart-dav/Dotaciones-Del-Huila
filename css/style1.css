@@ -2,9 +2,6 @@
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
-/* ==========================================
-WIDGET CHATBOT FLOTANTE
-   ========================================== */
 .chatbot-bubble {
     position: fixed;
     bottom: 25px;
@@ -35,7 +32,6 @@ WIDGET CHATBOT FLOTANTE
     fill: currentColor;
 }
 
-/* Ventana de Chat */
 .chatbot-window {
     position: fixed;
     bottom: 95px;
@@ -61,7 +57,6 @@ WIDGET CHATBOT FLOTANTE
     transform: translateY(20px) scale(0.95);
 }
 
-/* Encabezado */
 .chatbot-header {
     background-color: var(--green);
     color: var(--white);
@@ -100,7 +95,6 @@ WIDGET CHATBOT FLOTANTE
     opacity: 1;
 }
 
-/* Mensajes */
 .chatbot-messages {
     flex: 1;
     padding: 15px;
@@ -147,7 +141,6 @@ WIDGET CHATBOT FLOTANTE
     font-weight: 800;
 }
 
-/* Input y Botón */
 .chatbot-input-area {
     padding: 10px 12px;
     background-color: var(--white);
