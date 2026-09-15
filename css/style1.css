@@ -21,6 +21,17 @@
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
+.chatbot-bubble {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-drag: none;
+    touch-action: none;
+}
+
+.chatbot-bubble:active {
+    cursor: grabbing;
+}
+
 .chatbot-bubble:hover {
     background-color: var(--orange-dark);
     transform: scale(1.08);
