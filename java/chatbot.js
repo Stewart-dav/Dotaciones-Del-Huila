@@ -898,25 +898,6 @@ if (typeof ResizeObserver !== "undefined") {
 bubble.style.zIndex = "10000";
 chatWin.style.zIndex = "9999";
 
-function inyectarBotonCerrar() {
-    if (document.getElementById("chatCloseBtn")) return;
-
-    const btn = document.createElement("button");
-    btn.id = "chatCloseBtn";
-    btn.type = "button";
-    btn.innerHTML = "&times;";
-    btn.title = "Cerrar chat";
-    btn.className = "cb-close-btn";
-    btn.addEventListener("click", () => {
-        chatWin.classList.add("hidden");
-    });
-
-    if (getComputedStyle(chatWin).position === "static") {
-        chatWin.style.position = "relative";
-    }
-    chatWin.appendChild(btn);
-}
-
 (function inyectarEstilosChatbot() {
     if (document.getElementById("chatbotEstilosDinamicos")) return;
 
