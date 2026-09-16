@@ -1074,6 +1074,51 @@ function quitarDelCarrito(idProducto) {
     guardarCarrito();
 }
 
+
+function mostrarModalConfirmacion(titulo, mensaje, onConfirm) {
+    const prev = document.getElementById("dhModalOverlay");
+    if (prev) prev.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "dhModalOverlay";
+    overlay.className = "dh-modal-overlay";
+    overlay.innerHTML =
+        '<div class="dh-modal" role="dialog" aria-modal="true">' +
+            '<div class="dh-modal-title">' + titulo + '</div>' +
+            '<div class="dh-modal-msg">' + mensaje + '</div>' +
+            '<div class="dh-modal-actions">' +
+                '<button type="button" class="dh-modal-btn dh-modal-cancel" id="dhModalCancel">Cancelar</button>' +
+                '<button type="button" class="dh-modal-btn dh-modal-ok" id="dhModalOk">Aceptar</button>' +
+            '</div>' +
+        '</div>';
+    document.body.appendChild(overlay);
+
+    function cerrar() {
+        overlay.classList.add("dh-modal-out");
+        setTimeout(function () { overlay.remove(); }, 180);
+        document.removeEventListener("keydown", onKey);
+    }
+    function onKey(e) {
+        if (e.key === "Escape") cerrar();
+    }
+    document.addEventListener("keydown", onKey);
+
+    overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) cerrar();
+    });
+    document.getElementById("dhModalCancel").addEventListener("click", cerrar);
+    document.getElementById("dhModalOk").addEventListener("click", function () {
+        cerrar();
+        if (typeof onConfirm === "function") onConfirm();
+    });
+
+    // Focus primary action
+    setTimeout(function () {
+        const ok = document.getElementById("dhModalOk");
+        if (ok) ok.focus();
+    }, 30);
+}
+
 function vaciarCarrito() {
     carritoCotizacion = [];
     guardarCarrito();
@@ -1329,9 +1374,12 @@ function inyectarUICarrito() {
     document.getElementById("cartCloseBtn").addEventListener("click", toggleCarrito);
     document.getElementById("cartSendWA").addEventListener("click", enviarCotizacionWhatsApp);
     document.getElementById("cartClear").addEventListener("click", function () {
-        if (carritoCotizacion.length && confirm("¿Vaciar toda la lista de cotización?")) {
-            vaciarCarrito();
-        }
+        if (!carritoCotizacion.length) return;
+        mostrarModalConfirmacion(
+            "Vaciar cotización",
+            "¿Seguro que quieres vaciar toda la lista de cotización?",
+            function () { vaciarCarrito(); }
+        );
     });
 
     // Quitar items
@@ -1388,7 +1436,7 @@ document.addEventListener("click", function (e) {
             height: 60px;
             border-radius: 50%;
             border: 1px solid rgba(255,255,255,0.4);
-            background: #2d7547;
+            background: #1b5e20;
             color: #fff;
             box-shadow: 0 8px 24px rgba(0,0,0,0.22);
             cursor: pointer;
@@ -1402,7 +1450,7 @@ document.addEventListener("click", function (e) {
             transition: transform 0.2s, background 0.2s;
         }
         .cart-bubble:hover {
-            background: #2d7547;
+            background: #1b5e20;
             transform: scale(1.08);
         }
         .cart-badge {
@@ -1448,7 +1496,7 @@ document.addEventListener("click", function (e) {
             transform: translateY(16px) scale(0.96);
         }
         .cart-header {
-            background: #2d7547;
+            background: #1b5e20;
             color: #fff;
             padding: 12px 16px;
             font-weight: 700;
@@ -1547,6 +1595,93 @@ document.addEventListener("click", function (e) {
             .cart-window { right: 12px; left: 12px; width: auto; top: 158px; bottom: auto; max-height: calc(100vh - 170px); }
         }
 
+
+
+        .dh-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(21, 24, 27, 0.45);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: dhModalFadeIn 0.18s ease;
+        }
+        .dh-modal-overlay.dh-modal-out {
+            animation: dhModalFadeOut 0.18s ease forwards;
+        }
+        @keyframes dhModalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes dhModalFadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .dh-modal {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #e7e4de;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.22);
+            width: 100%;
+            max-width: 340px;
+            padding: 22px 20px 18px;
+            animation: dhModalPop 0.2s ease;
+            font-family: 'Manrope', system-ui, sans-serif;
+        }
+        @keyframes dhModalPop {
+            from { opacity: 0; transform: scale(0.94) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .dh-modal-title {
+            font-family: 'Sora', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #15181b;
+            margin-bottom: 8px;
+        }
+        .dh-modal-msg {
+            color: #6b7178;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            margin-bottom: 20px;
+        }
+        .dh-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .dh-modal-btn {
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            font-family: inherit;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+        .dh-modal-cancel {
+            background: transparent;
+            border-color: #e7e4de;
+            color: #6b7178;
+        }
+        .dh-modal-cancel:hover {
+            border-color: #15181b;
+            color: #15181b;
+        }
+        .dh-modal-ok {
+            background: #c62828;
+            color: #fff;
+            border-color: #c62828;
+        }
+        .dh-modal-ok:hover {
+            background: #b71c1c;
+            border-color: #b71c1c;
+        }
 
         /* cart bajo el nav en movil / tablet (donde aparece hamburguesa) */
         @media (max-width: 900px) {
