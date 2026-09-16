@@ -445,7 +445,7 @@
 .catalog-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 30px rgba(21, 24, 27, 0.12);
-  border-color: var(--orange);
+  border-color: var(--green);
 }
 
 .catalog-thumb {
