@@ -4,6 +4,18 @@
     if (window.DESACTIVAR_TEMPORADAS) return;
     if (document.getElementById("temporada-root")) return;
 
+    const TEMPORADAS_ACTIVAS = {
+        navidad: true,
+        anio_nuevo: true,
+        san_valentin: true,
+        amor_amistad: true,
+        dia_madre: true,
+        dia_padre: true,
+        independencia: true,
+        halloween: true,
+        pascua: true
+    };
+
     function nEsimoDiaSemana(anio, mes, diaSemana, n) {
         let contador = 0;
         for (let d = 1; d <= 31; d++) {
@@ -17,15 +29,11 @@
         return null;
     }
 
-    function mismoDia(a, b) {
-        return a.getFullYear() === b.getFullYear() &&
-            a.getMonth() === b.getMonth() &&
-            a.getDate() === b.getDate();
-    }
-
     function enRango(hoy, inicio, fin) {
-        const t = hoy.setHours(0, 0, 0, 0);
-        return t >= inicio.setHours(0, 0, 0, 0) && t <= fin.setHours(0, 0, 0, 0);
+        const t = new Date(hoy); t.setHours(0, 0, 0, 0);
+        const a = new Date(inicio); a.setHours(0, 0, 0, 0);
+        const b = new Date(fin); b.setHours(0, 0, 0, 0);
+        return t.getTime() >= a.getTime() && t.getTime() <= b.getTime();
     }
 
     function fechaPascua(anio) {
@@ -48,133 +56,115 @@
         const dia = hoy.getDate();
 
         if ((mes === 11 && dia >= 31) || (mes === 0 && dia <= 2)) return "anio_nuevo";
-
         if (mes === 1 && dia >= 12 && dia <= 15) return "san_valentin";
 
         const pascua = fechaPascua(anio);
         const pascuaIni = new Date(pascua); pascuaIni.setDate(pascua.getDate() - 3);
         const pascuaFin = new Date(pascua); pascuaFin.setDate(pascua.getDate() + 1);
-        if (enRango(new Date(hoy), pascuaIni, pascuaFin)) return "pascua";
+        if (enRango(hoy, pascuaIni, pascuaFin)) return "pascua";
 
         const madre = nEsimoDiaSemana(anio, 4, 0, 2);
         if (madre) {
             const mi = new Date(madre); mi.setDate(madre.getDate() - 1);
             const mf = new Date(madre); mf.setDate(madre.getDate() + 1);
-            if (enRango(new Date(hoy), mi, mf)) return "dia_madre";
+            if (enRango(hoy, mi, mf)) return "dia_madre";
         }
 
         const padre = nEsimoDiaSemana(anio, 5, 0, 3);
         if (padre) {
             const pi = new Date(padre); pi.setDate(padre.getDate() - 1);
             const pf = new Date(padre); pf.setDate(padre.getDate() + 1);
-            if (enRango(new Date(hoy), pi, pf)) return "dia_padre";
+            if (enRango(hoy, pi, pf)) return "dia_padre";
         }
 
         if (mes === 6 && dia >= 19 && dia <= 21) return "independencia";
-
         if (mes === 7 && dia >= 6 && dia <= 8) return "independencia";
 
         const amor = nEsimoDiaSemana(anio, 8, 6, 3);
         if (amor) {
             const ai = new Date(amor); ai.setDate(amor.getDate() - 2);
             const af = new Date(amor); af.setDate(amor.getDate() + 1);
-            if (enRango(new Date(hoy), ai, af)) return "amor_amistad";
+            if (enRango(hoy, ai, af)) return "amor_amistad";
         }
 
         if (mes === 9 && dia >= 28 && dia <= 31) return "halloween";
-
         if (mes === 11) return "navidad";
 
         return null;
     }
 
-    const hoy = new Date();
-    const temporada = detectarTemporada(hoy);
-    if (!temporada) return;
-
     const TEMPORADAS = {
         navidad: {
             banner: "🎄 ¡Feliz Navidad! 🎄",
             bannerGradient: "linear-gradient(135deg, #c62828, #2e7d32)",
-            luces: ["#e53935", "#43a047", "#fdd835", "#1e88e5", "#fb8c00", "#e91e63"],
-            adornos: ["❄", "❅", "❆", "🎄", "⭐", "🎁", "🔔", "✨", "🦌", "🕯️"],
-            esquinas: { tl: "🎄", tr: "🎄", bl: "⭐", br: "🎁" },
-            particulas: "nieve",
-            colorParticula: "255, 255, 255"
+            luces: true,
+            coloresLuces: ["#e53935", "#43a047", "#fdd835", "#1e88e5", "#fb8c00", "#e91e63"],
+            tipo: "nieve",
+            colores: ["#ffffff", "#e8f5e9", "#fce4ec", "#fffde7"]
         },
         anio_nuevo: {
             banner: "✨ ¡Feliz Año Nuevo! ✨",
             bannerGradient: "linear-gradient(135deg, #6a1b9a, #1565c0)",
-            luces: ["#fdd835", "#e91e63", "#00e5ff", "#76ff03", "#ff1744", "#ffffff"],
-            adornos: ["🎉", "🎊", "✨", "🥂", "🎆", "⭐", "💫", "🥳"],
-            esquinas: { tl: "🎉", tr: "🎊", bl: "✨", br: "🥂" },
-            particulas: "confeti",
-            colorParticula: null
+            luces: false,
+            tipo: "fuegos",
+            colores: ["#fdd835", "#e91e63", "#00e5ff", "#76ff03", "#ff1744", "#ffffff", "#7c4dff"]
         },
         san_valentin: {
             banner: "💕 ¡Feliz San Valentín! 💕",
             bannerGradient: "linear-gradient(135deg, #c2185b, #e91e63)",
-            luces: ["#e91e63", "#f48fb1", "#ff1744", "#fce4ec", "#ad1457"],
-            adornos: ["❤️", "💕", "💗", "💖", "💘", "💝", "🌹", "✨"],
-            esquinas: { tl: "💕", tr: "❤️", bl: "🌹", br: "💖" },
-            particulas: "corazones",
-            colorParticula: null
+            luces: false,
+            tipo: "corazones",
+            colores: ["#e91e63", "#f48fb1", "#ff1744", "#ad1457", "#fce4ec"]
         },
         amor_amistad: {
             banner: "💛 Día del Amor y la Amistad 💛",
             bannerGradient: "linear-gradient(135deg, #f9a825, #e91e63)",
-            luces: ["#f9a825", "#e91e63", "#ff7043", "#ab47bc", "#42a5f5"],
-            adornos: ["💛", "❤️", "🧡", "💖", "🌸", "✨", "🎁", "💌"],
-            esquinas: { tl: "💛", tr: "❤️", bl: "🌸", br: "🎁" },
-            particulas: "corazones",
-            colorParticula: null
+            luces: false,
+            tipo: "corazones",
+            colores: ["#f9a825", "#e91e63", "#ff7043", "#ab47bc", "#42a5f5"]
         },
         dia_madre: {
             banner: "🌷 ¡Feliz Día de la Madre! 🌷",
             bannerGradient: "linear-gradient(135deg, #ad1457, #ec407a)",
-            luces: ["#ec407a", "#f48fb1", "#ce93d8", "#ffcdd2", "#fce4ec"],
-            adornos: ["🌷", "🌸", "🌺", "💕", "💖", "💐", "✨", "🦋"],
-            esquinas: { tl: "🌷", tr: "🌸", bl: "💐", br: "💕" },
-            particulas: "petalos",
-            colorParticula: null
+            luces: false,
+            tipo: "petalos",
+            colores: ["#ec407a", "#f48fb1", "#ce93d8", "#ffcdd2", "#f8bbd0"]
         },
         dia_padre: {
             banner: "👔 ¡Feliz Día del Padre! 👔",
             bannerGradient: "linear-gradient(135deg, #1565c0, #0d47a1)",
-            luces: ["#1565c0", "#42a5f5", "#90caf9", "#ffd54f", "#66bb6a"],
-            adornos: ["👔", "🎩", "⭐", "💙", "🏆", "✨", "🎈", "👏"],
-            esquinas: { tl: "👔", tr: "🎩", bl: "⭐", br: "💙" },
-            particulas: "confeti",
-            colorParticula: null
+            luces: false,
+            tipo: "confeti",
+            colores: ["#1565c0", "#42a5f5", "#90caf9", "#ffd54f", "#66bb6a", "#ffffff"]
         },
         independencia: {
             banner: "🇨🇴 ¡Viva Colombia! 🇨🇴",
             bannerGradient: "linear-gradient(135deg, #ffc107, #1976d2, #c62828)",
-            luces: ["#ffc107", "#1976d2", "#c62828", "#ffeb3b", "#42a5f5", "#ef5350"],
-            adornos: ["🇨🇴", "⭐", "🎉", "✨", "🟡", "🔵", "🔴", "🏅"],
-            esquinas: { tl: "🇨🇴", tr: "🇨🇴", bl: "⭐", br: "🎉" },
-            particulas: "confeti",
-            colorParticula: null
+            luces: false,
+            tipo: "confeti",
+            colores: ["#ffc107", "#1976d2", "#c62828", "#ffeb3b", "#42a5f5", "#ef5350"]
         },
         halloween: {
             banner: "🎃 ¡Feliz Halloween! 🎃",
             bannerGradient: "linear-gradient(135deg, #e65100, #4a148c)",
-            luces: ["#ff6d00", "#7b1fa2", "#ffab00", "#6a1b9a", "#ff3d00"],
-            adornos: ["🎃", "👻", "🦇", "🕷️", "💀", "🕸️", "🌙", "✨"],
-            esquinas: { tl: "🎃", tr: "👻", bl: "🦇", br: "🕷️" },
-            particulas: "halloween",
-            colorParticula: null
+            luces: false,
+            tipo: "halloween",
+            colores: ["#ff6d00", "#7b1fa2", "#212121", "#ffab00", "#6d4c41"]
         },
         pascua: {
             banner: "🐣 ¡Felices Pascuas! 🐣",
             bannerGradient: "linear-gradient(135deg, #7b1fa2, #43a047)",
-            luces: ["#ce93d8", "#a5d6a7", "#fff59d", "#80deea", "#f48fb1"],
-            adornos: ["🐣", "🐰", "🥚", "🌷", "🌸", "✨", "🌿", "🕊️"],
-            esquinas: { tl: "🐰", tr: "🐣", bl: "🌷", br: "🥚" },
-            particulas: "petalos",
-            colorParticula: null
+            luces: false,
+            tipo: "petalos",
+            colores: ["#ce93d8", "#a5d6a7", "#fff59d", "#80deea", "#f48fb1"]
         }
     };
+
+    const hoy = new Date();
+    const temporada = detectarTemporada(hoy);
+    if (!temporada) return;
+
+    if (TEMPORADAS_ACTIVAS[temporada] === false) return;
 
     const cfg = TEMPORADAS[temporada];
     if (!cfg) return;
@@ -191,6 +181,14 @@
     const style = document.createElement("style");
     style.id = "temporada-estilos";
     style.textContent = `
+        #tsparticles-temporada {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            pointer-events: none !important;
+            z-index: 9996 !important;
+        }
         #temporada-luces {
             position: absolute; top: 0; left: 0; width: 100%; height: 18px;
             display: flex; justify-content: space-around; align-items: flex-start;
@@ -210,21 +208,6 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.35; transform: scale(0.85); }
         }
-
-        #temporada-adornos { position: absolute; inset: 0; z-index: 1; }
-        .temporada-adorno {
-            position: absolute; font-size: 1.35rem; user-select: none;
-            animation: tempFlotar linear infinite;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
-        }
-        @keyframes tempFlotar {
-            0%   { transform: translateY(0) rotate(0deg); }
-            25%  { transform: translateY(-12px) rotate(8deg); }
-            50%  { transform: translateY(0) rotate(0deg); }
-            75%  { transform: translateY(10px) rotate(-8deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
-
         #temporada-banner {
             position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
             color: #fff; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -232,7 +215,6 @@
             border-radius: 20px; white-space: nowrap;
             box-shadow: 0 2px 10px rgba(0,0,0,0.25); z-index: 3;
             animation: tempBannerIn 0.8s ease-out, tempBannerPulse 3s ease-in-out 1s infinite;
-            letter-spacing: 0.02em;
         }
         @keyframes tempBannerIn {
             from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
@@ -242,38 +224,22 @@
             0%, 100% { box-shadow: 0 2px 10px rgba(0,0,0,0.25); }
             50% { box-shadow: 0 2px 16px rgba(255,215,0,0.4); }
         }
-
-        #temporada-esquinas { position: absolute; inset: 0; z-index: 1; }
-        .temporada-esquina {
-            position: absolute; font-size: 2rem; opacity: 0.75;
-            animation: tempEsquina 4s ease-in-out infinite;
-        }
-        .temporada-esquina.tl { top: 28px; left: 10px; }
-        .temporada-esquina.tr { top: 28px; right: 10px; animation-delay: 0.5s; }
-        .temporada-esquina.bl { bottom: 16px; left: 12px; animation-delay: 1s; font-size: 1.6rem; }
-        .temporada-esquina.br { bottom: 16px; right: 12px; animation-delay: 1.5s; font-size: 1.6rem; }
-        @keyframes tempEsquina {
-            0%, 100% { transform: scale(1) rotate(-5deg); }
-            50% { transform: scale(1.12) rotate(5deg); }
-        }
-
         @media (max-width: 480px) {
             #temporada-banner { font-size: 0.68rem; padding: 4px 10px; }
-            .temporada-esquina { font-size: 1.4rem; }
-            .temporada-esquina.bl, .temporada-esquina.br { font-size: 1.2rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #tsparticles-temporada { display: none !important; }
         }
     `;
     document.head.appendChild(style);
 
-    // Luces colgantes solo en Navidad
-    if (temporada === "navidad") {
+    if (cfg.luces && cfg.coloresLuces) {
         const lucesWrap = document.createElement("div");
         lucesWrap.id = "temporada-luces";
-        const numLuces = 28;
-        for (let i = 0; i < numLuces; i++) {
+        for (let i = 0; i < 28; i++) {
             const luz = document.createElement("div");
             luz.className = "temporada-luz";
-            const color = cfg.luces[i % cfg.luces.length];
+            const color = cfg.coloresLuces[i % cfg.coloresLuces.length];
             luz.style.color = color;
             luz.style.background = color;
             luz.style.animationDelay = (Math.random() * 1.4).toFixed(2) + "s";
@@ -295,203 +261,175 @@
         setTimeout(function () { banner.remove(); }, 1100);
     }, 9000);
 
-    const esquinas = document.createElement("div");
-    esquinas.id = "temporada-esquinas";
-    esquinas.innerHTML =
-        '<span class="temporada-esquina tl">' + cfg.esquinas.tl + "</span>" +
-        '<span class="temporada-esquina tr">' + cfg.esquinas.tr + "</span>" +
-        '<span class="temporada-esquina bl">' + cfg.esquinas.bl + "</span>" +
-        '<span class="temporada-esquina br">' + cfg.esquinas.br + "</span>";
-    root.appendChild(esquinas);
+    const particlesDiv = document.createElement("div");
+    particlesDiv.id = "tsparticles-temporada";
+    document.body.appendChild(particlesDiv);
 
-    const adornosWrap = document.createElement("div");
-    adornosWrap.id = "temporada-adornos";
-    const numAdornos = 12;
-    for (let i = 0; i < numAdornos; i++) {
-        const el = document.createElement("span");
-        el.className = "temporada-adorno";
-        el.textContent = cfg.adornos[i % cfg.adornos.length];
-        el.style.left = (5 + Math.random() * 90) + "%";
-        el.style.top = (12 + Math.random() * 70) + "%";
-        el.style.fontSize = (1.1 + Math.random() * 0.85) + "rem";
-        el.style.animationDuration = (4 + Math.random() * 5).toFixed(1) + "s";
-        el.style.animationDelay = (Math.random() * 3).toFixed(1) + "s";
-        el.style.opacity = (0.55 + Math.random() * 0.4).toFixed(2);
-        adornosWrap.appendChild(el);
-    }
-    root.appendChild(adornosWrap);
-
-    const canvas = document.createElement("canvas");
-    canvas.id = "temporada-canvas";
-    Object.assign(canvas.style, {
-        position: "absolute", top: "0", left: "0",
-        width: "100%", height: "100%", pointerEvents: "none", zIndex: "0"
-    });
-    root.appendChild(canvas);
-
-    const ctx = canvas.getContext("2d");
-    let ancho, alto, animId;
-    const particulas = [];
-    const CANTIDAD = 45;
-
-    const COLORES_CONFETI = ["#e53935", "#43a047", "#fdd835", "#1e88e5", "#fb8c00", "#e91e63", "#00acc1", "#ffffff"];
-    const COLORES_HALLOWEEN = ["#ff6d00", "#7b1fa2", "#212121", "#ffab00", "#6d4c41"];
-    const COLORES_PETALOS = ["#f48fb1", "#ec407a", "#fce4ec", "#ce93d8", "#ffcdd2", "#f8bbd0"];
-    const COLORES_CORAZONES = ["#e91e63", "#f06292", "#ff1744", "#ad1457", "#f48fb1"];
-
-    function redimensionar() {
-        ancho = window.innerWidth;
-        alto = window.innerHeight;
-        canvas.width = ancho;
-        canvas.height = alto;
-    }
-
-    function colorAleatorio(lista) {
-        return lista[Math.floor(Math.random() * lista.length)];
-    }
-
-    function crearParticula() {
-        const tipo = cfg.particulas;
+    function opcionesPorTipo(tipo, colores) {
         const base = {
-            x: Math.random() * ancho,
-            y: Math.random() * alto - alto,
-            velY: 0.5 + Math.random() * 2,
-            velX: (Math.random() - 0.5) * 1.2,
-            oscilacion: Math.random() * Math.PI * 2,
-            rotacion: Math.random() * 360,
-            velRot: (Math.random() - 0.5) * 4,
-            opacidad: 0.4 + Math.random() * 0.55,
-            tamaño: 3 + Math.random() * 7
+            fullScreen: { enable: false },
+            background: { color: { value: "transparent" } },
+            fpsLimit: 60,
+            detectRetina: true,
+            pauseOnBlur: true,
+            pauseOnOutsideViewport: true,
+            particles: {
+                number: { value: 45, density: { enable: true, width: 1920, height: 1080 } },
+                color: { value: colores },
+                opacity: { value: { min: 0.35, max: 0.85 } },
+                size: { value: { min: 2, max: 6 } },
+                move: {
+                    enable: true,
+                    speed: 1.2,
+                    direction: "bottom",
+                    outModes: { default: "out" }
+                }
+            }
         };
 
         if (tipo === "nieve") {
-            base.velY = 0.5 + Math.random() * 1.8;
-            base.velX = (Math.random() - 0.5) * 0.5;
-            base.tamaño = 2.5 + Math.random() * 6;
-            base.color = "255,255,255";
-            base.forma = "circulo";
-        } else if (tipo === "confeti") {
-            base.color = colorAleatorio(COLORES_CONFETI);
-            base.forma = Math.random() > 0.5 ? "rect" : "circulo";
-            base.tamaño = 4 + Math.random() * 6;
-            base.velY = 1 + Math.random() * 2.5;
+            base.particles.number.value = 70;
+            base.particles.shape = { type: "circle" };
+            base.particles.size = { value: { min: 1, max: 5 } };
+            base.particles.move = {
+                enable: true,
+                speed: { min: 0.4, max: 1.4 },
+                direction: "bottom",
+                straight: false,
+                outModes: { default: "out" },
+                drift: { min: -0.4, max: 0.4 }
+            };
+            base.particles.opacity = { value: { min: 0.3, max: 0.9 } };
+            base.particles.wobble = { enable: true, distance: 8, speed: 8 };
         } else if (tipo === "corazones") {
-            base.color = colorAleatorio(COLORES_CORAZONES);
-            base.forma = "corazon";
-            base.tamaño = 8 + Math.random() * 10;
-            base.velY = 0.6 + Math.random() * 1.5;
+            base.particles.number.value = 35;
+            base.particles.shape = { type: "heart" };
+            base.particles.size = { value: { min: 4, max: 12 } };
+            base.particles.move = {
+                enable: true,
+                speed: { min: 0.6, max: 1.8 },
+                direction: "bottom",
+                outModes: { default: "out" },
+                drift: { min: -0.6, max: 0.6 }
+            };
         } else if (tipo === "petalos") {
-            base.color = colorAleatorio(COLORES_PETALOS);
-            base.forma = "petalo";
-            base.tamaño = 6 + Math.random() * 8;
-            base.velY = 0.4 + Math.random() * 1.2;
-            base.velX = (Math.random() - 0.5) * 1.5;
+            base.particles.number.value = 40;
+            base.particles.shape = { type: "circle" };
+            base.particles.size = { value: { min: 3, max: 8 } };
+            base.particles.move = {
+                enable: true,
+                speed: { min: 0.5, max: 1.5 },
+                direction: "bottom",
+                outModes: { default: "out" },
+                drift: { min: -1, max: 1 }
+            };
+            base.particles.rotate = {
+                value: { min: 0, max: 360 },
+                animation: { enable: true, speed: 8 },
+                direction: "random"
+            };
         } else if (tipo === "halloween") {
-            base.color = colorAleatorio(COLORES_HALLOWEEN);
-            base.forma = Math.random() > 0.6 ? "circulo" : "rect";
-            base.tamaño = 3 + Math.random() * 6;
-            base.velY = 0.7 + Math.random() * 2;
+            base.particles.number.value = 40;
+            base.particles.shape = { type: ["circle", "square"] };
+            base.particles.size = { value: { min: 2, max: 7 } };
+            base.particles.move = {
+                enable: true,
+                speed: { min: 0.8, max: 2.2 },
+                direction: "bottom",
+                outModes: { default: "out" }
+            };
+        } else if (tipo === "fuegos") {
+            base.particles.number.value = 0;
+            base.emitters = {
+                direction: "none",
+                rate: { quantity: 5, delay: 0.35 },
+                size: { width: 0, height: 0 },
+                position: { x: 50, y: 35 },
+                particles: {
+                    color: { value: colores },
+                    shape: { type: ["circle", "square"] },
+                    opacity: {
+                        value: { min: 0.3, max: 1 },
+                        animation: { enable: true, speed: 1.5, startValue: "max", destroy: "min" }
+                    },
+                    size: { value: { min: 2, max: 5 } },
+                    life: { duration: { value: 2 }, count: 1 },
+                    move: {
+                        enable: true,
+                        gravity: { enable: true, acceleration: 3 },
+                        speed: { min: 5, max: 18 },
+                        decay: 0.05,
+                        direction: "none",
+                        outModes: { default: "destroy" }
+                    }
+                }
+            };
+            // Emisores laterales
+            base.emitters = [
+                {
+                    direction: "top-right",
+                    rate: { quantity: 4, delay: 0.5 },
+                    position: { x: 15, y: 70 },
+                    size: { width: 0, height: 0 },
+                    particles: base.emitters.particles
+                },
+                {
+                    direction: "top",
+                    rate: { quantity: 6, delay: 0.4 },
+                    position: { x: 50, y: 40 },
+                    size: { width: 0, height: 0 },
+                    particles: base.emitters.particles
+                },
+                {
+                    direction: "top-left",
+                    rate: { quantity: 4, delay: 0.5 },
+                    position: { x: 85, y: 70 },
+                    size: { width: 0, height: 0 },
+                    particles: base.emitters.particles
+                }
+            ];
         } else {
-            base.color = "255,255,255";
-            base.forma = "circulo";
+            base.particles.number.value = 50;
+            base.particles.shape = { type: ["circle", "square"] };
+            base.particles.size = { value: { min: 2, max: 7 } };
+            base.particles.move = {
+                enable: true,
+                speed: { min: 1, max: 3 },
+                direction: "bottom",
+                outModes: { default: "out" },
+                drift: { min: -0.5, max: 0.5 }
+            };
+            base.particles.rotate = {
+                value: { min: 0, max: 360 },
+                animation: { enable: true, speed: 12 },
+                direction: "random"
+            };
         }
+
         return base;
     }
 
-    function dibujarCorazon(ctx, x, y, size, color, op) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.scale(size / 16, size / 16);
-        ctx.beginPath();
-        ctx.moveTo(0, 4);
-        ctx.bezierCurveTo(-8, -4, -16, 4, 0, 14);
-        ctx.bezierCurveTo(16, 4, 8, -4, 0, 4);
-        ctx.fillStyle = color;
-        ctx.globalAlpha = op;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        ctx.restore();
-    }
-
-    function dibujarPetalo(ctx, x, y, size, color, rot, op) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate((rot * Math.PI) / 180);
-        ctx.beginPath();
-        ctx.ellipse(0, 0, size * 0.35, size * 0.6, 0, 0, Math.PI * 2);
-        ctx.fillStyle = color;
-        ctx.globalAlpha = op;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        ctx.restore();
-    }
-
-    function initParticulas() {
-        redimensionar();
-        particulas.length = 0;
-        for (let i = 0; i < CANTIDAD; i++) particulas.push(crearParticula());
-    }
-
-    function dibujar() {
-        ctx.clearRect(0, 0, ancho, alto);
-
-        for (let i = 0; i < particulas.length; i++) {
-            const p = particulas[i];
-            p.oscilacion += 0.01 + Math.random() * 0.008;
-            p.x += p.velX + Math.sin(p.oscilacion) * 0.4;
-            p.y += p.velY;
-            p.rotacion += p.velRot;
-
-            if (p.y > alto + 15) {
-                p.y = -15;
-                p.x = Math.random() * ancho;
-            }
-            if (p.x > ancho + 15) p.x = -15;
-            if (p.x < -15) p.x = ancho + 15;
-
-            if (p.forma === "corazon") {
-                dibujarCorazon(ctx, p.x, p.y, p.tamaño, p.color, p.opacidad);
-            } else if (p.forma === "petalo") {
-                dibujarPetalo(ctx, p.x, p.y, p.tamaño, p.color, p.rotacion, p.opacidad);
-            } else if (p.forma === "rect") {
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate((p.rotacion * Math.PI) / 180);
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.opacidad;
-                ctx.fillRect(-p.tamaño / 2, -p.tamaño / 4, p.tamaño, p.tamaño / 2);
-                ctx.globalAlpha = 1;
-                ctx.restore();
-            } else {
-                // circulo (nieve u otros)
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.tamaño, 0, Math.PI * 2);
-                if (typeof p.color === "string" && p.color.indexOf(",") !== -1) {
-                    ctx.fillStyle = "rgba(" + p.color + "," + p.opacidad + ")";
-                } else {
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.opacidad;
-                }
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            }
+    function cargarTsParticles(callback) {
+        if (window.tsParticles && typeof window.tsParticles.load === "function") {
+            callback();
+            return;
         }
-        animId = requestAnimationFrame(dibujar);
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/tsparticles@3.5.0/tsparticles.bundle.min.js";
+        s.async = true;
+        s.onload = callback;
+        s.onerror = function () {
+            console.warn("No se pudo cargar tsParticles");
+        };
+        document.head.appendChild(s);
     }
-
-    document.addEventListener("visibilitychange", function () {
-        if (document.hidden) cancelAnimationFrame(animId);
-        else dibujar();
-    });
-    window.addEventListener("resize", redimensionar);
 
     function arrancar() {
-        initParticulas();
-        dibujar();
+        const opts = opcionesPorTipo(cfg.tipo, cfg.colores);
+        window.tsParticles.load("tsparticles-temporada", opts).catch(function (err) {
+            console.warn("tsParticles load error:", err);
+        });
     }
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", arrancar);
-    } else {
-        arrancar();
-    }
+
+    cargarTsParticles(arrancar);
 })();
