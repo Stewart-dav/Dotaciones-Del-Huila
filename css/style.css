@@ -137,10 +137,6 @@ section{ padding:96px 0; }
   position:relative;
 }
 
-/* ============================================================
-   Barra Flotante (.nav)
-   ============================================================ */
-
 .nav {
   pointer-events: auto;
   width: 100%;
@@ -154,16 +150,11 @@ section{ padding:96px 0; }
   -webkit-backdrop-filter: blur(14px);
   border-radius: 999px;
   position: relative;
-  /* Estilo base fluido para móviles (borde estático sin lag) */
   border: 2px solid rgba(242, 133, 28, 0.35);
   box-shadow: 0 12px 30px rgba(21, 24, 27, 0.08);
 }
 
-/* ============================================================
-   EFECTO NEÓN NANO - SOLO PARA ESCRITORIO (PC) > 900px
-   ============================================================ */
-
-@media (min-width: 901px) {
+@media (min-width: 450px) {
   @property --neon-angle {
     syntax: '<angle>';
     initial-value: 0deg;
