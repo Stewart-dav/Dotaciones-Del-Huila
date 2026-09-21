@@ -137,20 +137,9 @@ section{ padding:96px 0; }
   position:relative;
 }
 
-@property --neon-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes recorrerBorde {
-  0% {
-    --neon-angle: 0deg;
-  }
-  100% {
-    --neon-angle: 360deg;
-  }
-}
+/* ============================================================
+   Barra Flotante (.nav)
+   ============================================================ */
 
 .nav {
   pointer-events: auto;
@@ -165,46 +154,76 @@ section{ padding:96px 0; }
   -webkit-backdrop-filter: blur(14px);
   border-radius: 999px;
   position: relative;
-  border: 1px solid rgba(242, 133, 28, 0.3);
-  box-shadow: 
-    0 0 15px rgba(242, 133, 28, 0.3),
-    0 0 30px rgba(242, 133, 28, 0.15);
+  /* Estilo base fluido para móviles (borde estático sin lag) */
+  border: 2px solid rgba(242, 133, 28, 0.35);
+  box-shadow: 0 12px 30px rgba(21, 24, 27, 0.08);
 }
 
-.nav::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 999px;
-  padding: 2px;
+/* ============================================================
+   EFECTO NEÓN NANO - SOLO PARA ESCRITORIO (PC) > 900px
+   ============================================================ */
 
-  background: conic-gradient(
-    from var(--neon-angle, 0deg),
-    transparent 0%,
-    transparent 60%,
-    #ff6a00 78%,
-    #ffae00 86%,
-    #ffffff 92%,
-    #ff6a00 97%,
-    transparent 100%
-  );
+@media (min-width: 901px) {
+  @property --neon-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
 
-  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
-  mask-clip: content-box, border-box;
-  mask-composite: exclude;
+  @keyframes recorrerBorde {
+    0% {
+      --neon-angle: 0deg;
+    }
+    100% {
+      --neon-angle: 360deg;
+    }
+  }
 
-  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
-  -webkit-mask-clip: content-box, border-box;
-  -webkit-mask-composite: xor;
+  .nav {
+    border: 1px solid rgba(242, 133, 28, 0.3);
+    box-shadow: 
+      0 0 15px rgba(242, 133, 28, 0.3),
+      0 0 30px rgba(242, 133, 28, 0.15);
+  }
 
-  filter: 
-    drop-shadow(0 0 2px #ffffff) 
-    drop-shadow(0 0 6px #ff8c00) 
-    drop-shadow(0 0 12px #f2851c) 
-    drop-shadow(0 0 20px #ff4500);
+  /* Tubo de neón incandescente viajero */
+  .nav::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 999px;
+    padding: 3px;
+    
+    background: conic-gradient(
+      from var(--neon-angle, 0deg),
+      transparent 0%,
+      transparent 60%,
+      #ff6a00 78%,     /* Naranja intenso */
+      #ffae00 86%,     /* Brillo cálido */
+      #ffffff 92%,     /* Núcleo blanco incandescente */
+      #ff6a00 97%,     /* Cierre del halo */
+      transparent 100%
+    );
 
-  animation: recorrerBorde 2s linear infinite;
-  pointer-events: none;
+    /* Máscara compatible sin advertencias del editor */
+    mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+    mask-clip: content-box, border-box;
+    mask-composite: exclude;
+
+    -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+    -webkit-mask-clip: content-box, border-box;
+    -webkit-mask-composite: xor;
+
+    /* Halo neón envolvente */
+    filter: 
+      drop-shadow(0 0 2px #ffffff) 
+      drop-shadow(0 0 6px #ff8c00) 
+      drop-shadow(0 0 12px #f2851c) 
+      drop-shadow(0 0 20px #ff4500);
+
+    animation: recorrerBorde 2s linear infinite;
+    pointer-events: none;
+  }
 }
 
 .nav-brand{
