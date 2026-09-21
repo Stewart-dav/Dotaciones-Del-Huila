@@ -136,21 +136,77 @@ section{ padding:96px 0; }
   max-width:var(--maxw);
   position:relative;
 }
-.nav{
-  pointer-events:auto;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  padding:8px 18px;
-  background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--line);
-  border-radius:999px;
-  box-shadow:0 12px 30px rgba(21,24,27,0.08);
+
+@property --neon-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
+
+@keyframes recorrerBorde {
+  0% {
+    --neon-angle: 0deg;
+  }
+  100% {
+    --neon-angle: 360deg;
+  }
+}
+
+.nav {
+  pointer-events: auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 999px;
+  position: relative;
+  border: 1px solid rgba(242, 133, 28, 0.3);
+  box-shadow: 
+    0 0 15px rgba(242, 133, 28, 0.3),
+    0 0 30px rgba(242, 133, 28, 0.15);
+}
+
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 999px;
+  padding: 2px;
+
+  background: conic-gradient(
+    from var(--neon-angle, 0deg),
+    transparent 0%,
+    transparent 60%,
+    #ff6a00 78%,
+    #ffae00 86%,
+    #ffffff 92%,
+    #ff6a00 97%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
+
+  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor;
+
+  filter: 
+    drop-shadow(0 0 2px #ffffff) 
+    drop-shadow(0 0 6px #ff8c00) 
+    drop-shadow(0 0 12px #f2851c) 
+    drop-shadow(0 0 20px #ff4500);
+
+  animation: recorrerBorde 2s linear infinite;
+  pointer-events: none;
+}
+
 .nav-brand{
   display:flex;
   align-items:center;
@@ -688,6 +744,12 @@ section{ padding:96px 0; }
   align-items: center;
   justify-content: center;
   border: 1px solid var(--line);
+  transition:transform 0.2s ease, background-color 0.2s ease;
+}
+
+.client-logo:hover {
+  transform: translateY(-4px);
+  border-color: var(--orange);
 }
 
 .client-logo img {
